@@ -306,7 +306,7 @@ export default function WeddingInvitation() {
         <img 
           src={src} 
           alt="Decorative Flower"
-          loading="lazy"
+          loading="eager"
           className="w-full h-full object-contain"
           style={{
             // The inner image only handles the SWAY animation
