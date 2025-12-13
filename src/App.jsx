@@ -512,13 +512,13 @@ const toggleMusic = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100/50 to-indigo-100 relative overflow-hidden">
       <PreloadAssets imageUrls={photos} />
-      {/* {[...Array(45)].map((_, i) => (
+      {[...Array(45)].map((_, i) => (
         <Firefly key={`firefly-main-${i}`} delay={i * 0.15} index={i} />
       ))}
       
       {[...Array(25)].map((_, i) => (
         <MagicSparkle key={`sparkle-main-${i}`} delay={i * 0.25} />
-      ))} */}
+      ))}
       
       {[...Array(40)].map((_, i) => (
         <Flower 
