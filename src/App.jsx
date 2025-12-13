@@ -78,8 +78,8 @@ const Firefly = ({ delay, index }) => {
   );
 };
   const flowers = {
-    cherry: '/assets/flowers/4.png',
-    blossom: '/assets/flowers/7.png',
+    cherry: '/assets/flowers/4.webp',
+    blossom: '/assets/flowers/7.webp',
   };
 
   const Flower = ({ type }) => {
@@ -376,7 +376,7 @@ const toggleMusic = () => {
         
         {/* --- ADDED FLOWER FRAME IMAGES HERE --- */}
         <FramingFlower 
-          src="/assets/flowers/2.png" 
+          src="/assets/flowers/2.webp" 
           // Position: Top edge, centered horizontally
           positionClass="top-0 -translate-x-1/2" 
           // Size: Full width on mobile, constrained on large screens
@@ -388,7 +388,7 @@ const toggleMusic = () => {
 
         {/* 2. BOTTOM-LEFT FLOWER (Standard positioning) */}
         <FramingFlower 
-          src="/assets/flowers/5.png" // Changed to 1.png for this spot
+          src="/assets/flowers/5.webp" // Changed to 1.png for this spot
           positionClass="bottom-0 left-0" 
           sizeClass="w-60 md:w-48"
           delay={1.5}
@@ -396,7 +396,7 @@ const toggleMusic = () => {
 
         {/* 3. BOTTOM-RIGHT FLOWER (Standard positioning) */}
         <FramingFlower 
-          src="/assets/flowers/5.png" 
+          src="/assets/flowers/5.webp" 
           positionClass="bottom-0 right-0" 
           sizeClass="w-60 md:w-48"
           delay={3}
@@ -553,7 +553,7 @@ const toggleMusic = () => {
           >
             {/* GlassEdgeFlower will now be visible outside the edge */}
             <GlassEdgeFlower 
-              src="/assets/flowers/4.png" 
+              src="/assets/flowers/4.webp" 
               className="bottom-[-20px] left-[-20px] w-20 h-20" 
               style={{ transform: 'rotate(15deg)' }}
             />
@@ -583,7 +583,7 @@ const toggleMusic = () => {
           }}
         >
             <GlassEdgeFlower 
-              src="/assets/flowers/1.png" 
+              src="/assets/flowers/1.webp" 
               className="top-[-20px] right-[-20px] w-20 h-20" 
               style={{ transform: 'rotate(15deg)' }}
             />
@@ -660,7 +660,7 @@ const toggleMusic = () => {
           >
           {/* GlassEdgeFlower will now be visible outside the edge */}
             <GlassEdgeFlower 
-              src="/assets/flowers/6.png" 
+              src="/assets/flowers/6.webp" 
               className="top-[-20px] left-[-20px] w-20 h-40" 
               style={{ transform: 'rotate(15deg)' }}
             />
@@ -697,7 +697,7 @@ const toggleMusic = () => {
             }}
           >
             <GlassEdgeFlower 
-              src="/assets/flowers/3.png" 
+              src="/assets/flowers/3.webp" 
               className="top-[-20px] right-[-20px] w-20 h-30" 
               style={{ transform: 'rotate(15deg)' }}
             />
