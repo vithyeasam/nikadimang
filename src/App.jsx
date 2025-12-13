@@ -121,6 +121,7 @@ const Firefly = ({ delay, index }) => {
         <img 
           src={flowerImg} 
           alt="flower" 
+          loading="lazy"
           className="w-full h-full object-contain"
         />
       </div>
@@ -131,6 +132,7 @@ const Firefly = ({ delay, index }) => {
     <img 
       src={src} 
       alt="Edge Decoration"
+      loading="lazy"
       // The z-40 ensures it's OVER the glass container (which is z-30)
       className={`absolute pointer-events-none z-40 ${className}`} 
       style={{
@@ -202,6 +204,7 @@ const PhotoSlideshow = ({ onComplete }) => {
           >
             <img 
               src={photo}
+              loading="lazy"
               alt={`Wedding photo ${idx + 1}`}
               className="w-full h-full object-cover md:object-contain"
             />
@@ -289,6 +292,7 @@ export default function WeddingInvitation() {
         <img 
           src={src} 
           alt="Decorative Flower"
+          loading="lazy"
           className="w-full h-full object-contain"
           style={{
             // The inner image only handles the SWAY animation
