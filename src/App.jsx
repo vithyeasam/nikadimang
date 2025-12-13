@@ -163,6 +163,20 @@ const MagicSparkle = ({ delay }) => {
   );
 };
 
+const PreloadAssets = ({ imageUrls }) => (
+  <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+    {imageUrls.map((url, index) => (
+      <img
+        key={index}
+        src={url}
+        alt="Preloading asset"
+        // Use a high priority for key assets
+        loading="eager" 
+      />
+    ))}
+  </div>
+);
+
 const PhotoSlideshow = ({ onComplete }) => {
   const [currentPhoto, setCurrentPhoto] = useState(0);
 
@@ -354,6 +368,7 @@ const toggleMusic = () => {
 };
 
   const handleOpen = () => {
+    setTimeout(() => {
     setIsOpened(true);
     setShowSlideshow(true);
     
@@ -367,6 +382,7 @@ const toggleMusic = () => {
       .catch(error => {
         console.log('Audio play failed:', error);
       });
+      }, 1300);
   };
 
   const handleSlideshowComplete = () => {
@@ -394,7 +410,7 @@ const toggleMusic = () => {
         <FramingFlower 
           src="/assets/flowers/5.webp" // Changed to 1.png for this spot
           positionClass="bottom-0 left-0" 
-          sizeClass="w-60 md:w-48"
+          sizeClass="w-60 md:w-48 md:h-48"
           delay={1.5}
         />
 
@@ -402,7 +418,7 @@ const toggleMusic = () => {
         <FramingFlower 
           src="/assets/flowers/5.webp" 
           positionClass="bottom-0 right-0" 
-          sizeClass="w-60 md:w-48"
+          sizeClass="w-60 md:w-48 md:h-48"
           delay={3}
           baseTransform={'translateX(20px) translateY(20px) scaleX(-1)'} 
         />
@@ -491,17 +507,18 @@ const toggleMusic = () => {
     return null;
   }
 
-  const flowerTypes = ['cherry', 'blossom', 'hibiscus', 'rose', 'tulip', 'sunflower', 'daisy', 'lavender'];
+  const flowerTypes = ['cherry', 'blossom'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100/50 to-indigo-100 relative overflow-hidden">
-      {[...Array(45)].map((_, i) => (
+      <PreloadAssets imageUrls={photos} />
+      {/* {[...Array(45)].map((_, i) => (
         <Firefly key={`firefly-main-${i}`} delay={i * 0.15} index={i} />
       ))}
       
       {[...Array(25)].map((_, i) => (
         <MagicSparkle key={`sparkle-main-${i}`} delay={i * 0.25} />
-      ))}
+      ))} */}
       
       {[...Array(40)].map((_, i) => (
         <Flower 
