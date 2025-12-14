@@ -163,6 +163,29 @@ const MagicSparkle = ({ delay }) => {
   );
 };
 
+const LoadingScreen = () => (
+  <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center z-50">
+    {[...Array(20)].map((_, i) => (
+      <Firefly key={`firefly-loading-${i}`} delay={i * 0.2} index={i} />
+    ))}
+    <div className="text-center">
+      <Heart 
+        className="w-16 h-16 mx-auto mb-4 text-purple-300 animate-pulse" 
+        style={{ 
+          filter: 'drop-shadow(0 0 20px rgba(216, 180, 254, 0.8))',
+          animation: 'float 2s ease-in-out infinite'
+        }}
+      />
+      <p className="text-white text-xl font-serif">Loading your invitation...</p>
+      <div className="mt-4 flex justify-center gap-2">
+        <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+        <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+        <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+      </div>
+    </div>
+  </div>
+);
+
 const PreloadAssets = ({ imageUrls }) => (
   <div style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
     {imageUrls.map((url, index) => (
@@ -179,21 +202,50 @@ const PreloadAssets = ({ imageUrls }) => (
 
 const PhotoSlideshow = ({ onComplete }) => {
   const [currentPhoto, setCurrentPhoto] = useState(0);
+  const [allLoaded, setAllLoaded] = useState(false);
+  const [loadedCount, setLoadedCount] = useState(0);
 
+  // Preload all images before starting slideshow
   useEffect(() => {
+    let loaded = 0;
+    
+    photos.forEach((src) => {
+      const img = new Image();
+      img.onload = () => {
+        loaded++;
+        setLoadedCount(loaded);
+        if (loaded === photos.length) {
+          setAllLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        loaded++;
+        setLoadedCount(loaded);
+        if (loaded === photos.length) {
+          setAllLoaded(true);
+        }
+      };
+      img.src = src;
+    });
+  }, []);
+
+  // Only start timer AFTER all images loaded
+  useEffect(() => {
+    if (!allLoaded) return;
+
     const timer = setInterval(() => {
       setCurrentPhoto(prev => {
         if (prev >= photos.length - 1) {
           clearInterval(timer);
-          setTimeout(onComplete, 1000);
+          setTimeout(onComplete, 2000);
           return prev;
         }
         return prev + 1;
       });
-    }, 3000); // 4 seconds per photo for more sentimental feel
+    }, 4000);
 
     return () => clearInterval(timer);
-  }, [onComplete]);
+  }, [allLoaded, onComplete]);
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 z-50 overflow-hidden">
@@ -205,8 +257,28 @@ const PhotoSlideshow = ({ onComplete }) => {
         <MagicSparkle key={`sparkle-slide-${i}`} delay={i * 0.3} />
       ))}
       
-      {/* Photo layers with crossfade */}
-      <div className="absolute inset-0">
+      {/* Show loading indicator while images load */}
+      {!allLoaded && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-50">
+          <Heart 
+            className="w-16 h-16 mb-4 text-purple-300 animate-pulse" 
+            style={{ 
+              filter: 'drop-shadow(0 0 20px rgba(216, 180, 254, 0.8))',
+              animation: 'float 2s ease-in-out infinite'
+            }}
+          />
+          <p className="text-white text-xl font-serif mb-4">Loading memories...</p>
+          <div className="flex gap-2 mb-4">
+            <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+            <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            <div className="w-2 h-2 bg-purple-300 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+          </div>
+          <p className="text-purple-300 text-sm">{loadedCount} / {photos.length} photos loaded</p>
+        </div>
+      )}
+      
+      {/* Photo layers with crossfade - only show when loaded */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 ${allLoaded ? 'opacity-100' : 'opacity-0'}`}>
         {photos.map((photo, idx) => (
           <div
             key={idx}
@@ -218,11 +290,10 @@ const PhotoSlideshow = ({ onComplete }) => {
           >
             <img 
               src={photo}
-              loading="lazy"
+              loading="eager"
               alt={`Wedding photo ${idx + 1}`}
               className="w-full h-full object-cover md:object-contain"
             />
-            {/* Gradient overlay for better readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-purple-900/30"></div>
           </div>
         ))}
@@ -238,6 +309,8 @@ export default function WeddingInvitation() {
   const [guestName, setGuestName] = useState('Guest');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [framingFlowersLoaded, setFramingFlowersLoaded] = useState(false);
 
   useEffect(() => {
     const guestId = "1";
@@ -295,26 +368,60 @@ export default function WeddingInvitation() {
     return a;
   });
 
+
     // --- FINAL CORRECTED FramingFlower COMPONENT ---
-    const FramingFlower = ({ src, positionClass, sizeClass, delay, baseTransform = '' }) => (
-      <div // This outer div will handle the static flip and offset
-        className={`absolute pointer-events-none opacity-100 z-20 ${positionClass} ${sizeClass}`}
+const FramingFlower = ({ src, positionClass, sizeClass, delay, baseTransform = '' }) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  return (
+    <div
+      className={`absolute pointer-events-none z-20 ${positionClass} ${sizeClass} transition-opacity duration-700`}
+      style={{
+        transform: baseTransform,
+        opacity: imageLoaded ? 1 : 0,
+      }}
+    >
+      <img 
+        src={src} 
+        alt="Decorative Flower"
+        loading="eager"
+        fetchPriority="high"
+        className="w-full h-full object-contain"
+        onLoad={() => setImageLoaded(true)}
         style={{
-          transform: baseTransform, // APPLY STATIC TRANSFORM (FLIP/MOVE) HERE
+          animation: imageLoaded ? `sway ${5 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate` : 'none',
         }}
-      >
-        <img 
-          src={src} 
-          alt="Decorative Flower"
-          loading="eager"
-          className="w-full h-full object-contain"
-          style={{
-            // The inner image only handles the SWAY animation
-            animation: `sway ${5 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate`,
-          }}
-        />
-      </div>
-    );
+      />
+    </div>
+  );
+};
+
+useEffect(() => {
+  // Preload framing flowers before showing cover page
+  const framingFlowerImages = [
+    '/assets/flowers/2.webp',
+    '/assets/flowers/5.webp'
+  ];
+  
+  let loadedCount = 0;
+  
+  framingFlowerImages.forEach(src => {
+    const img = new Image();
+    img.onload = () => {
+      loadedCount++;
+      if (loadedCount === framingFlowerImages.length) {
+        setFramingFlowersLoaded(true);
+      }
+    };
+    img.onerror = () => {
+      loadedCount++;
+      if (loadedCount === framingFlowerImages.length) {
+        setFramingFlowersLoaded(true);
+      }
+    };
+    img.src = src;
+  });
+}, []);
     // ----------------------------------------------------
 
   const fadeIn = (audio, duration = 3000) => {
@@ -367,28 +474,93 @@ const toggleMusic = () => {
   }
 };
 
-  const handleOpen = () => {
+const handleOpen = () => {
+  // Immediately hide cover page and show loading screen
+  setIsOpened(true);
+  setIsLoading(true);
+  
+  // Start music right away
+  audio.volume = 0;
+  audio.play()
+    .then(() => {
+      setIsMusicPlaying(true);
+      fadeIn(audio, 3000);
+      console.log('Music playing successfully!');
+    })
+    .catch(error => {
+      console.log('Audio play failed:', error);
+    });
+  
+  // Preload photos
+  const preloadPromises = photos.map(src => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        console.log(`✅ Loaded: ${src}`);
+        resolve();
+      };
+      img.onerror = () => {
+        console.log(`❌ Failed: ${src}`);
+        reject();
+      };
+      img.src = src;
+    });
+  });
+
+  // Maximum 10 second timeout for slow connections
+  const timeoutPromise = new Promise((resolve) => {
     setTimeout(() => {
-    setIsOpened(true);
-    setShowSlideshow(true);
-    
-    audio.volume = 0;
-    audio.play()
-      .then(() => {
-        setIsMusicPlaying(true);
-        fadeIn(audio, 3000); // 3 second fade-in
-        console.log('Music playing successfully!');
-      })
-      .catch(error => {
-        console.log('Audio play failed:', error);
-      });
-      }, 1300);
-  };
+      console.log('⏱️ Timeout: Starting slideshow anyway');
+      resolve();
+    }, 10000);
+  });
+
+  Promise.race([Promise.all(preloadPromises), timeoutPromise])
+    .then(() => {
+      console.log('✨ All photos ready, waiting before slideshow');
+      // Wait 1.5 seconds after loading completes before showing slideshow
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowSlideshow(true);
+      }, 1500); // Adjust this number (in milliseconds) for longer/shorter delay
+    })
+    .catch(error => {
+      console.log('⚠️ Some photos failed, starting anyway:', error);
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowSlideshow(true);
+      }, 1500);
+    });
+};
 
   const handleSlideshowComplete = () => {
     setShowSlideshow(false);
     setShowMainContent(true);
   };
+
+  if (isLoading) {
+  return <LoadingScreen />;
+}
+
+if (!framingFlowersLoaded) {
+  return (
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center z-50">
+      {[...Array(20)].map((_, i) => (
+        <Firefly key={`firefly-loading-${i}`} delay={i * 0.2} index={i} />
+      ))}
+      <div className="text-center">
+        <Heart 
+          className="w-16 h-16 mx-auto mb-4 text-purple-300 animate-pulse" 
+          style={{ 
+            filter: 'drop-shadow(0 0 20px rgba(216, 180, 254, 0.8))',
+            animation: 'float 2s ease-in-out infinite'
+          }}
+        />
+        <p className="text-white text-xl font-serif">Preparing your invitation...</p>
+      </div>
+    </div>
+  );
+}
 
   if (!isOpened) {
     return (
@@ -447,7 +619,7 @@ const toggleMusic = () => {
               <Heart 
                 className="w-20 h-20 mx-auto mb-6 text-purple-600 animate-pulse" 
                 style={{ 
-                  filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.5))',
+                  filter: 'drop-shadow(0 0 10px rgba(182, 131, 229, 0.5))',
                   animation: 'float 2s ease-in-out infinite'
                 }}
               />
