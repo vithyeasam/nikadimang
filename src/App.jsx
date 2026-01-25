@@ -1,7 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { Music, MapPin, Calendar, Clock, Heart, Sparkles } from 'lucide-react';
 import WeddingCarousel from './assets/WeddingCarousel';
 import guestData  from '../public/assets/names/guests';
+
+// Intersection Observer for lazy animation
+const useInView = (ref, options = { threshold: 0.1, rootMargin: '100px' }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        observer.unobserve(entry.target);
+      }
+    }, options);
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [options]);
+
+  return isVisible;
+};
 
 // Wedding details - customize these
 const weddingInfo = {
@@ -42,91 +64,67 @@ const photos = [
     // { url: '/assets/iloveimg/IMG1.png', alt: 'Couple portrait' },
   ];
 
-const Firefly = ({ delay, index }) => {
-  const [position, setPosition] = useState({
-    x: Math.random() * 100,
-    y: Math.random() * 100
-  });
-  
-  const [opacity, setOpacity] = useState(Math.random() * 0.5 + 0.3);
+//   function Firefly() {
+//   return <div className="firefly" />;
+// }
 
-  useEffect(() => {
-    const moveInterval = setInterval(() => {
-      setPosition({
-        x: Math.random() * 100,
-        y: Math.random() * 100
-      });
-    }, 4000 + Math.random() * 3000);
+const Firefly = memo(({ delay, index }) => {
+  const posRef = useRef({ x: Math.random() * 100, y: Math.random() * 100 });
+  const sizeRef = useRef(Math.random() * 3 + 2.5);
+  const animDurationRef = useRef(0.6 + Math.random() * 0.5);
 
-    const fadeInterval = setInterval(() => {
-      setOpacity(Math.random() * 0.6 + 0.2);
-    }, 1500 + Math.random() * 1000);
-
-    return () => {
-      clearInterval(moveInterval);
-      clearInterval(fadeInterval);
-    };
-  }, []);
-
-  const size = Math.random() * 2.5 + 2;
+  const size = sizeRef.current;
 
   return (
     <div
       className="absolute rounded-full pointer-events-none"
       style={{
-        left: `${position.x}%`,
-        top: `${position.y}%`,
+        left: `${posRef.current.x}%`,
+        top: `${posRef.current.y}%`,
         width: `${size}px`,
         height: `${size}px`,
-        background: 'rgba(255, 251, 150, 0.9)',
-        transition: `all ${3 + Math.random() * 2}s cubic-bezier(0.4, 0, 0.2, 1)`,
-        opacity: opacity,
-        boxShadow: `0 0 ${size * 5}px ${size * 2}px rgba(255, 251, 150, 0.8), 0 0 ${size * 10}px ${size * 4}px rgba(255, 251, 150, 0.4)`,
-        filter: 'blur(0.3px)',
-        animation: `twinkle ${1 + Math.random()}s ease-in-out infinite alternate`
+        background: 'radial-gradient(circle, rgba(255, 251, 150, 1) 0%, rgba(255, 251, 150, 0.6) 100%)',
+        boxShadow: `0 0 ${size * 8}px rgba(255, 251, 150, 0.9), 0 0 ${size * 16}px rgba(255, 200, 50, 0.6), 0 0 ${size * 24}px rgba(255, 150, 0, 0.3)`,
+        animation: `twinkle ${animDurationRef.current}s ease-in-out infinite`,
+        willChange: 'opacity, transform',
+        backfaceVisibility: 'hidden',
+        filter: 'drop-shadow(0 0 4px rgba(255, 251, 150, 0.8))'
       }}
     />
   );
-};
+});
   const flowers = {
     cherry: '/assets/flowers/4.webp',
     blossom: '/assets/flowers/7.webp',
   };
 
-  const Flower = ({ type }) => {
-    const [position, setPosition] = useState({
+  const Flower = memo(({ type }) => {
+    const posRef = useRef({
       x: Math.random() * 100,
       y: Math.random() * 100,
       rotation: Math.random() * 360
     });
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setPosition({
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          rotation: Math.random() * 360
-        });
-      }, 10000 + Math.random() * 5000);
-      return () => clearInterval(interval);
-    }, []);
+    const sizeRef = useRef(30 + Math.random() * 30);
+    const animDurationRef = useRef(8 + Math.random() * 6);
+    const driftDurationRef = useRef(6 + Math.random() * 4);
 
     const flowerImg = flowers[type] || flowers.cherry;
-    const size = 30 + Math.random() * 30; // Slightly larger for images
+    const size = sizeRef.current;
 
     return (
       <div
         className="absolute pointer-events-none"
         style={{
-          left: `${position.x}%`,
-          top: `${position.y}%`,
+          left: `${posRef.current.x}%`,
+          top: `${posRef.current.y}%`,
           width: `${size}px`,
           height: `${size}px`,
-          transition: `all ${8 + Math.random() * 4}s cubic-bezier(0.4, 0, 0.2, 1)`,
-          transform: `rotate(${position.rotation}deg)`,
-          opacity: 0.4 + Math.random() * 0.4,
-          filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8)) brightness(1.1)', // The "Fairy Glow"
-          animation: `float ${4 + Math.random() * 3}s ease-in-out infinite alternate`,
+          transform: `rotate(${posRef.current.rotation}deg)`,
+          opacity: 0.65,
+          filter: 'brightness(1.2) drop-shadow(0 0 8px rgba(168, 85, 247, 0.4))',
+          animation: `drift ${driftDurationRef.current}s ease-in-out infinite`,
+          willChange: 'transform',
+          backfaceVisibility: 'hidden'
         }}
       >
         <img 
@@ -137,46 +135,53 @@ const Firefly = ({ delay, index }) => {
         />
       </div>
     );
-  };
+  });
 
-  const GlassEdgeFlower = ({ src, className, style }) => (
+  const GlassEdgeFlower = memo(({ src, className, style }) => (
     <img 
       src={src} 
       alt="Edge Decoration"
       loading="lazy"
-      // The z-40 ensures it's OVER the glass container (which is z-30)
       className={`absolute pointer-events-none z-40 ${className}`} 
       style={{
         filter: 'drop-shadow(0 0 2px rgba(0, 0, 0, 0.2))', 
         ...style
       }}
     />
-  );
+  ));
 
-const MagicSparkle = ({ delay }) => {
+const MagicSparkle = memo(({ delay }) => {
+  const leftRef = useRef(`${Math.random() * 100}%`);
+  const topRef = useRef(`${Math.random() * 100}%`);
+  const sizeRef = useRef(12 + Math.random() * 8);
+  const durRef = useRef(1.5 + Math.random() * 1.5);
+
   return (
     <div
       className="absolute pointer-events-none"
       style={{
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
-        animation: `sparkle ${2 + Math.random() * 2}s ease-in-out ${delay}s infinite`
+        left: leftRef.current,
+        top: topRef.current,
+        animation: `sparkle ${durRef.current}s ease-in-out ${delay}s infinite`,
+        willChange: 'opacity, transform',
+        backfaceVisibility: 'hidden',
+        filter: 'drop-shadow(0 0 8px rgba(168, 85, 247, 0.9))'
       }}
     >
       <Sparkles 
-        className="text-purple-300" 
-        size={12 + Math.random() * 8}
+        className="text-transparent" 
+        size={sizeRef.current}
         style={{
-          filter: 'drop-shadow(0 0 3px rgba(216, 180, 254, 0.8))'
+          filter: 'drop-shadow(0 0 4px rgba(168, 85, 247, 0.8)) drop-shadow(0 0 8px rgba(200, 100, 255, 0.6))'
         }}
       />
     </div>
   );
-};
+});
 
 const LoadingScreen = () => (
   <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center z-50">
-    {[...Array(20)].map((_, i) => (
+    {[...Array(10)].map((_, i) => (
       <Firefly key={`firefly-loading-${i}`} delay={i * 0.2} index={i} />
     ))}
     <div className="text-center">
@@ -260,7 +265,7 @@ const PhotoSlideshow = ({ onComplete }) => {
 
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 z-50 overflow-hidden">
-      {[...Array(25)].map((_, i) => (
+      {[...Array(10)].map((_, i) => (
         <Firefly key={`firefly-slide-${i}`} delay={i * 0.2} index={i} />
       ))}
       
@@ -324,55 +329,33 @@ export default function WeddingInvitation() {
   const [framingFlowersLoaded, setFramingFlowersLoaded] = useState(false);
 
   useEffect(() => {
-  // 1. Get the 'id' from the URL (e.g., ?id=1)
-  const queryParams = new URLSearchParams(window.location.search);
-  const guestId = queryParams.get('id');
-
-  // 2. Set the name based on the ID found
-  if (guestId && guestData[guestId]) {
-    setGuestName(guestData[guestId]);
-  } else {
-    setGuestName('Dear Guest'); // Default fallback
-  }
-}, []);
-
-  useEffect(() => {
-    // const guestId = "1";
-    // setGuestName(guestData[guestId] || 'Dear Guest');
-
-    // https://invitation.vercel.app/?id=1
-        // 1. Get the 'id' from the URL (e.g., ?id=1)
     const queryParams = new URLSearchParams(window.location.search);
     const guestId = queryParams.get('id');
+    setGuestName(guestId && guestData[guestId] ? guestData[guestId] : 'Dear Guest');
 
-    // 2. Set the name based on the ID found
-    if (guestId && guestData[guestId]) {
-      setGuestName(guestData[guestId]);
-    } else {
-      setGuestName('Dear Guest'); // Default fallback
-    }
-    
     const style = document.createElement('style');
     style.textContent = `
       @keyframes twinkle {
-        0%, 100% { opacity: 0.3; transform: scale(1); }
-        50% { opacity: 0.9; transform: scale(1.3); }
+        0%, 100% { opacity: 0.1; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1.2); }
       }
       @keyframes sparkle {
-        0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-        50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        0%, 100% { opacity: 0; transform: scale(0.5); }
+        50% { opacity: 1; transform: scale(1); }
       }
-      @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
+      @keyframes drift {
+        0%, 100% { transform: translateX(0px) translateY(0px); }
+        25% { transform: translateX(30px) translateY(-15px); }
+        50% { transform: translateX(0px) translateY(-30px); }
+        75% { transform: translateX(-30px) translateY(-15px); }
       }
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
       @keyframes glow {
-        0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-        50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
+        0%, 100% { box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        50% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.6); }
       }
       @keyframes petalFall {
         0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
@@ -400,102 +383,100 @@ export default function WeddingInvitation() {
   const [audio] = useState(() => {
     const a = new Audio('/assets/song.mp3');
     a.loop = true;
-    a.volume = 0; // Start at 0 for fade-in
+    a.volume = 0;
     return a;
   });
 
+  // --- FINAL CORRECTED FramingFlower COMPONENT ---
+  const FramingFlower = memo(({ src, positionClass, sizeClass, delay, baseTransform = '' }) => {
+    const [imageLoaded, setImageLoaded] = useState(false);
 
-    // --- FINAL CORRECTED FramingFlower COMPONENT ---
-const FramingFlower = ({ src, positionClass, sizeClass, delay, baseTransform = '' }) => {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  return (
-    <div
-      className={`absolute pointer-events-none z-20 ${positionClass} ${sizeClass} transition-opacity duration-700`}
-      style={{
-        transform: baseTransform,
-        opacity: imageLoaded ? 1 : 0,
-      }}
-    >
-      <img 
-        src={src} 
-        alt="Decorative Flower"
-        loading="eager"
-        fetchPriority="high"
-        className="w-full h-full object-contain"
-        onLoad={() => setImageLoaded(true)}
+    return (
+      <div
+        className={`absolute pointer-events-none z-20 ${positionClass} ${sizeClass} transition-opacity duration-700`}
         style={{
-          animation: imageLoaded ? `sway ${5 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate` : 'none',
+          transform: baseTransform,
+          opacity: imageLoaded ? 1 : 0,
         }}
-      />
-    </div>
-  );
-};
-
-useEffect(() => {
-  // Preload framing flowers before showing cover page
-  const framingFlowerImages = [
-    '/assets/flowers/2.webp',
-    '/assets/flowers/5.webp'
-  ];
-  
-  let loadedCount = 0;
-  
-  framingFlowerImages.forEach(src => {
-    const img = new Image();
-    img.onload = () => {
-      loadedCount++;
-      if (loadedCount === framingFlowerImages.length) {
-        setFramingFlowersLoaded(true);
-      }
-    };
-    img.onerror = () => {
-      loadedCount++;
-      if (loadedCount === framingFlowerImages.length) {
-        setFramingFlowersLoaded(true);
-      }
-    };
-    img.src = src;
+      >
+        <img 
+          src={src} 
+          alt="Decorative Flower"
+          loading="eager"
+          fetchPriority="high"
+          className="w-full h-full object-contain"
+          onLoad={() => setImageLoaded(true)}
+          style={{
+            animation: imageLoaded ? `sway ${5 + Math.random() * 3}s ease-in-out ${delay}s infinite alternate` : 'none',
+          }}
+        />
+      </div>
+    );
   });
-}, []);
-    // ----------------------------------------------------
 
-  const fadeIn = (audio, duration = 3000) => {
-  const steps = 50;
-  const stepDuration = duration / steps;
-  const volumeIncrement = 0.5 / steps;
-  let currentStep = 0;
+  useEffect(() => {
+    // Preload framing flowers before showing cover page
+    const framingFlowerImages = [
+      '/assets/flowers/2.webp',
+      '/assets/flowers/5.webp'
+    ];
+    
+    let loadedCount = 0;
+    
+    framingFlowerImages.forEach(src => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === framingFlowerImages.length) {
+          setFramingFlowersLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        if (loadedCount === framingFlowerImages.length) {
+          setFramingFlowersLoaded(true);
+        }
+      };
+      img.src = src;
+    });
+  }, []);
 
-  const fadeInterval = setInterval(() => {
-    if (currentStep >= steps) {
-      clearInterval(fadeInterval);
-      audio.volume = 0.5;
-    } else {
-      audio.volume = Math.min(audio.volume + volumeIncrement, 0.5);
-      currentStep++;
-    }
-  }, stepDuration);
-};
+  const fadeIn = useCallback((audio, duration = 3000) => {
+    const steps = 50;
+    const stepDuration = duration / steps;
+    const volumeIncrement = 0.5 / steps;
+    let currentStep = 0;
 
-const fadeOut = (audio, duration = 1000) => {
-  const steps = 20;
-  const stepDuration = duration / steps;
-  const volumeDecrement = audio.volume / steps;
-  let currentStep = 0;
+    const fadeInterval = setInterval(() => {
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval);
+        audio.volume = 0.5;
+      } else {
+        audio.volume = Math.min(audio.volume + volumeIncrement, 0.5);
+        currentStep++;
+      }
+    }, stepDuration);
+  }, []);
 
-  const fadeInterval = setInterval(() => {
-    if (currentStep >= steps || audio.volume <= 0) {
-      clearInterval(fadeInterval);
-      audio.volume = 0;
-      audio.pause();
-    } else {
-      audio.volume = Math.max(audio.volume - volumeDecrement, 0);
-      currentStep++;
-    }
-  }, stepDuration);
-};
+  const fadeOut = useCallback((audio, duration = 1000) => {
+    const steps = 20;
+    const stepDuration = duration / steps;
+    const volumeDecrement = audio.volume / steps;
+    let currentStep = 0;
 
-const toggleMusic = () => {
+    const fadeInterval = setInterval(() => {
+      if (currentStep >= steps || audio.volume <= 0) {
+        clearInterval(fadeInterval);
+        audio.volume = 0;
+        audio.pause();
+      } else {
+        audio.volume = Math.max(audio.volume - volumeDecrement, 0);
+        currentStep++;
+      }
+    }, stepDuration);
+  }, []);
+
+const toggleMusic = useCallback(() => {
   if (isMusicPlaying) {
     fadeOut(audio);
     setIsMusicPlaying(false);
@@ -508,14 +489,12 @@ const toggleMusic = () => {
       })
       .catch(err => console.log('Audio play failed:', err));
   }
-};
+}, [isMusicPlaying, audio, fadeIn, fadeOut]);
 
-const handleOpen = () => {
-  // Immediately hide cover page and show loading screen
+const handleOpen = useCallback(() => {
   setIsOpened(true);
   setIsLoading(true);
   
-  // Start music right away
   audio.volume = 0;
   audio.play()
     .then(() => {
@@ -527,7 +506,6 @@ const handleOpen = () => {
       console.log('Audio play failed:', error);
     });
   
-  // Preload photos
   const preloadPromises = photos.map(src => {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -543,7 +521,6 @@ const handleOpen = () => {
     });
   });
 
-  // Maximum 10 second timeout for slow connections
   const timeoutPromise = new Promise((resolve) => {
     setTimeout(() => {
       console.log('⏱️ Timeout: Starting slideshow anyway');
@@ -554,11 +531,10 @@ const handleOpen = () => {
   Promise.race([Promise.all(preloadPromises), timeoutPromise])
     .then(() => {
       console.log('✨ All photos ready, waiting before slideshow');
-      // Wait 1.5 seconds after loading completes before showing slideshow
       setTimeout(() => {
         setIsLoading(false);
         setShowSlideshow(true);
-      }, 1500); // Adjust this number (in milliseconds) for longer/shorter delay
+      }, 1500);
     })
     .catch(error => {
       console.log('⚠️ Some photos failed, starting anyway:', error);
@@ -567,12 +543,12 @@ const handleOpen = () => {
         setShowSlideshow(true);
       }, 1500);
     });
-};
+}, [audio, fadeIn]);
 
-  const handleSlideshowComplete = () => {
+  const handleSlideshowComplete = useCallback(() => {
     setShowSlideshow(false);
     setShowMainContent(true);
-  };
+  }, []);
 
   if (isLoading) {
   return <LoadingScreen />;
@@ -581,7 +557,7 @@ const handleOpen = () => {
 if (!framingFlowersLoaded) {
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 flex items-center justify-center z-50">
-      {[...Array(20)].map((_, i) => (
+      {[...Array(10)].map((_, i) => (
         <Firefly key={`firefly-loading-${i}`} delay={i * 0.2} index={i} />
       ))}
       <div className="text-center">
@@ -632,7 +608,7 @@ if (!framingFlowersLoaded) {
         />
         {/* -------------------------------------- */}
 
-        {[...Array(35)].map((_, i) => (
+        {[...Array(10)].map((_, i) => (
           <Firefly key={`firefly-${i}`} delay={i * 0.2} index={i} />
         ))}
         
@@ -719,15 +695,15 @@ if (!framingFlowersLoaded) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-purple-100/50 to-indigo-100 relative overflow-hidden">
       <PreloadAssets imageUrls={photos} />
-      {[...Array(45)].map((_, i) => (
+      {[...Array(15)].map((_, i) => (
         <Firefly key={`firefly-main-${i}`} delay={i * 0.15} index={i} />
       ))}
       
-      {[...Array(25)].map((_, i) => (
+      {[...Array(20)].map((_, i) => (
         <MagicSparkle key={`sparkle-main-${i}`} delay={i * 0.25} />
       ))}
       
-      {[...Array(40)].map((_, i) => (
+      {[...Array(30)].map((_, i) => (
         <Flower 
           key={`flower-${i}`} 
           delay={i * 0.3} 
@@ -735,8 +711,8 @@ if (!framingFlowersLoaded) {
         />
       ))}
       
-      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-300 rounded-full opacity-10 blur-3xl"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-300 rounded-full opacity-10 blur-3xl"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-300 rounded-full opacity-10 blur-3xl hidden md:block" style={{willChange: 'transform'}}></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-300 rounded-full opacity-10 blur-3xl hidden md:block" style={{willChange: 'transform'}}></div>
       
       <div className="relative z-10 max-w-2xl mx-auto px-4 py-8 md:py-12">
         
