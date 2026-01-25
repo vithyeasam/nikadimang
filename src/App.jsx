@@ -1,23 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Music, MapPin, Calendar, Clock, Heart, Sparkles } from 'lucide-react';
-
-// Guest data - easily customizable
-const guestData = {
-  "1": "David",
-  "2": "Mary",
-  "3": "John & Family",
-  "4": "Sarah",
-  "5": "Michael & Jennifer"
-};
+import WeddingCarousel from './assets/WeddingCarousel';
+import guestData  from '../public/assets/names/guests';
 
 // Wedding details - customize these
 const weddingInfo = {
-  bride: "Nika",
-  groom: "Dimang",
-  date: "Feb 28, 2025",
-  time: "4:00 PM",
-  venue: "Garden Paradise Resort",
-  address: "123 Blossom Street, Springfield",
+  bride: "និកាណ៌",
+  groom: "ឌីម៉ង់",
+  date: "២៨ កុម្ភះ ២០២៥",
+  time: "០៥:00 ល្ងាច",
+  venue: "ភោជនីយដ្ឋាន វិមានពរជ័យ",
+  address: "ក្រុងបាត់ដំបង",
   ceremony: "5:00 PM",
   reception: "7:00 PM"
 };
@@ -30,6 +23,24 @@ const photos = [
   "/assets/DSC024361.jpg",
   "/assets/DSC024571.jpg"
 ];
+
+  const weddingPhotos = [
+    { url: '/assets/iloveimg/IMG1.png', alt: 'Wedding ceremony' },
+    { url: '/assets/iloveimg/IMG2.png', alt: 'First dance' },
+    { url: '/assets/iloveimg/IMG3.png', alt: 'Exchange of vows' },
+    { url: '/assets/iloveimg/IMG4.png', alt: 'Wedding party' },
+    { url: '/assets/iloveimg/IMG5.png', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG6.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG7.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG8.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG9.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG10.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG11.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG12.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG13.jpg', alt: 'Reception' },
+    { url: '/assets/iloveimg/IMG14.jpg', alt: 'Reception' },
+    // { url: '/assets/iloveimg/IMG1.png', alt: 'Couple portrait' },
+  ];
 
 const Firefly = ({ delay, index }) => {
   const [position, setPosition] = useState({
@@ -313,8 +324,33 @@ export default function WeddingInvitation() {
   const [framingFlowersLoaded, setFramingFlowersLoaded] = useState(false);
 
   useEffect(() => {
-    const guestId = "1";
-    setGuestName(guestData[guestId] || 'Dear Guest');
+  // 1. Get the 'id' from the URL (e.g., ?id=1)
+  const queryParams = new URLSearchParams(window.location.search);
+  const guestId = queryParams.get('id');
+
+  // 2. Set the name based on the ID found
+  if (guestId && guestData[guestId]) {
+    setGuestName(guestData[guestId]);
+  } else {
+    setGuestName('Dear Guest'); // Default fallback
+  }
+}, []);
+
+  useEffect(() => {
+    // const guestId = "1";
+    // setGuestName(guestData[guestId] || 'Dear Guest');
+
+    // https://invitation.vercel.app/?id=1
+        // 1. Get the 'id' from the URL (e.g., ?id=1)
+    const queryParams = new URLSearchParams(window.location.search);
+    const guestId = queryParams.get('id');
+
+    // 2. Set the name based on the ID found
+    if (guestId && guestData[guestId]) {
+      setGuestName(guestData[guestId]);
+    } else {
+      setGuestName('Dear Guest'); // Default fallback
+    }
     
     const style = document.createElement('style');
     style.textContent = `
@@ -624,13 +660,13 @@ if (!framingFlowersLoaded) {
                 }}
               />
               
-              <h1 className="text-4xl md:text-5xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-900 mb-4">
+              <h1 className="text-4xl md:text-5xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-900 mb-4 py-2">
                 {weddingInfo.bride} & {weddingInfo.groom}
               </h1>
               
               <div className="my-8 py-6 border-y-2 border-purple-300 relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-100/50 to-transparent"></div>
-                <p className="text-lg text-purple-700 mb-2 relative z-10">You're Invited</p>
+                <p className="text-lg text-purple-700 mb-2 relative z-10">សូមគោរពអញ្ជើញ</p>
                 <p className="text-2xl md:text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-indigo-800 relative z-10">
                   {guestName}
                 </p>
@@ -639,7 +675,6 @@ if (!framingFlowersLoaded) {
               <p className="text-gray-700 mb-8 text-sm md:text-base">
                 We joyfully invite you to celebrate our magical wedding day
               </p>
-              
               <button
                 onClick={handleOpen}
                 className="relative bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 text-white px-12 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden group"
@@ -647,7 +682,7 @@ if (!framingFlowersLoaded) {
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   <Sparkles size={20} />
-                  Open Invitation
+                  បេីកសំបុត្រ
                   <Sparkles size={20} />
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -717,24 +752,144 @@ if (!framingFlowersLoaded) {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
             
             <Heart className="w-16 h-16 mx-auto mb-4 text-purple-600" style={{ filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.4))' }} />
-            <h1 className="text-5xl md:text-6xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-900 mb-2 relative">
+            <h1 className="text-5xl md:text-6xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-900 mb-2 relative py-2">
               {weddingInfo.bride}
             </h1>
             <p className="text-3xl md:text-4xl text-purple-400 my-4">&</p>
-            <h1 className="text-5xl md:text-6xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-900 mb-6 relative">
+            <h1 className="text-5xl md:text-6xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 via-purple-700 to-indigo-900 mb-6 relative py-2">
               {weddingInfo.groom}
             </h1>
             <div className="w-32 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto my-6 rounded-full"></div>
-            <p className="text-lg text-purple-800">
-              Together with their families
+            <p className="text-2xl text-purple-800 font-bold">
+              សូមគោរពអញ្ជើញ
             </p>
-            <p className="text-xl text-purple-900 mt-4 font-medium">
-              Request the honor of your presence
-            </p>
+            <div className="flex justify-center px-6">
+              <p className="max-w-prose text-center text-m text-purple-900 mt-6 font-medium leading-[2.2] [text-wrap:balance]">
+                យើងខ្ញុំនិងក្រុមគ្រួសារមានកិត្តិយសសូមគោរពអញ្ជើញ <br className="hidden md:block" />
+                ឯកឧត្តម លោកជំទាវ លោក លោកស្រី អ្នកនាងកញ្ញា និងប្រិយមិត្ត <br className="hidden md:block" />
+                អញ្ជើញចូលរួមជាអធិបតី និងជាភ្ញៀវកិត្តិយសដើម្បីប្រសិទ្ធពរជ័យ <br className="hidden md:block" />
+                សិរីសួស្ដីជ័យមង្គល ក្នុងពិធីរៀបអាពាហ៍ពិពាហ៍របស់យើងខ្ញុំ។
+              </p>
+            </div>
           </div>
         </div>
 
-          <div 
+        <div 
+            className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
+            style={{
+              // animation: 'float 3s ease-in-out infinite',
+              // Strongest inner white shine for reflection, and a defined purple outer glow.
+              marginTop: 20,
+              boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
+            }}
+          >
+          {/* GlassEdgeFlower will now be visible outside the edge */}
+            <GlassEdgeFlower 
+              src="/assets/flowers/6.webp" 
+              className="top-[-20px] left-[-20px] w-20 h-40" 
+              style={{ transform: 'rotate(15deg)' }}
+            />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
+          <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative">Our Story</h2>
+                  <WeddingCarousel 
+          photos={weddingPhotos}
+          autoPlayInterval={5000} // 5 seconds per slide (optional)
+        />
+          {/* <p className="text-center text-purple-600 mt-6 italic text-sm">
+            Replace these placeholders with your actual photos
+          </p> */}
+        </div>
+
+        <div 
+          className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative overflow-hidden ring-1 ring-white/80"
+          style={{
+            // animation: 'float 3s ease-in-out infinite',
+            // Strongest inner white shine for reflection, and a defined purple outer glow.
+            marginTop: 20,
+            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
+          <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative py-2 leading-relaxed">
+            កម្មវិធីមង្គលអាពាហ៍ពិពាហ៍
+          </h2>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 text-purple-400 mb-1">
+              <span className="text-xs">✦</span>
+              <span className="text-xl">❀</span>
+              <span className="text-xs">✦</span>
+            </div>
+            <h2 className="text-2xl font-bold text-purple-900 leading-relaxed">
+              ព្រឹក
+            </h2>
+            <div className="w-16 h-1 bg-purple-200 mx-auto mt-2 rounded-full"></div>
+          </div>
+          <div className="space-y-4 relative">
+            {[
+              { time: '០៥:៣០', title: 'ពិធីសំពះពិលា', desc: '' },
+              { time: '០៧:០០', title: 'ពិធីហែជំនូន', desc: '' },
+              { time: '០៩:០០', title: 'ពិធីលេីកផ្កាស្លា និងបំពាក់ចិញ្ចៀន', desc: '' },
+              { time: '១០:០០', title: 'ពិធីកាត់សក់បង្កក់សិរី', desc: '' },
+              { time: '១១:០០', title: 'អញ្ជេីញភ្ញៀវពិសាអាហារថ្ងៃត្រង់', desc: '' }
+            ].map((event, idx) => (
+              <div key={idx} className="flex items-start group">
+              <div 
+                className="bg-gradient-to-br from-purple-400 to-indigo-300 text-white rounded-full w-16 h-16 flex items-center justify-center font-semibold mr-4 flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-500 ease-out"
+                style={{ 
+                  filter: 'drop-shadow(0 4px 12px rgba(216, 180, 254, 0.6))',
+                  border: '2px solid rgba(255, 255, 255, 0.4)' 
+                }}
+              >
+                <span className="text-sm drop-shadow-sm">
+                  {event.time}
+                </span>
+              </div>
+                <div>
+                  <h3 className="font-semibold text-lg text-purple-900 py-4">{event.title}</h3>
+                  <p className="text-purple-700">{event.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 text-purple-400 mb-1">
+              <span className="text-xs">✦</span>
+              <span className="text-xl">❀</span>
+              <span className="text-xs">✦</span>
+            </div>
+            <h2 className="text-2xl font-bold text-purple-900 leading-relaxed">
+              រសៀល
+            </h2>
+            <div className="w-16 h-1 bg-purple-200 mx-auto mt-2 rounded-full"></div>
+          </div>
+          <div className="space-y-4 relative">
+            {[
+              { time: '០១:០០', title: 'ពិធីសំពះផ្ទឹម សែនចងដៃ បង្វិលពពិល និងព្រះថោងនាងនាគ', desc: '' },
+              { time: '០២:០០', title: 'ពិធីសូត្រមន្ដចម្រេីនព្រះបរិត្ត', desc: '' },
+              { time: '០៥:០០', title: 'អញ្ជេីញភ្ញៀវពិសាភោជនាហារនៅ ភោជនីយដ្ឋាន វិមានពរជ័យ', desc: '' },
+            ].map((event, idx) => (
+              <div key={idx} className="flex items-start group">
+                <div 
+                  className="bg-gradient-to-br from-purple-400 to-indigo-300 text-white rounded-full w-16 h-16 flex items-center justify-center font-semibold mr-4 flex-shrink-0 shadow-md group-hover:scale-110 transition-transform duration-500 ease-out"
+                  style={{ 
+                    filter: 'drop-shadow(0 4px 12px rgba(216, 180, 254, 0.6))',
+                    border: '2px solid rgba(255, 255, 255, 0.4)' 
+                  }}
+                >
+                  <span className="text-sm drop-shadow-sm">
+                    {event.time}
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg text-purple-900 py-2">{event.title}</h3>
+                  <p className="text-purple-700">{event.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+                  <div 
             className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
             // REMOVED: overflow-hidden
             style={{
@@ -753,12 +908,12 @@ if (!framingFlowersLoaded) {
             
             {/* ... rest of your content ... */}
           <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
-          <div className="flex items-center justify-center mb-4 relative">
+          <div className="flex items-center justify-center relative">
             <Calendar className="w-8 h-8 text-purple-600 mr-3" style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.3))' }} />
-            <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900">Save the Date</h2>
+            <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">កាលបរិច្ឆេទ</h2>
           </div>
           <div className="text-center relative">
-            <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-indigo-800 mb-2">{weddingInfo.date}</p>
+            <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-indigo-800 mb-2 py-2">{weddingInfo.date}</p>
             <div className="flex items-center justify-center text-xl text-purple-900">
               <Clock className="w-5 h-5 mr-2 text-purple-600" />
               <span>{weddingInfo.time}</span>
@@ -783,7 +938,7 @@ if (!framingFlowersLoaded) {
           <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
           <div className="flex items-center justify-center mb-4 relative">
             <MapPin className="w-8 h-8 text-purple-600 mr-3" style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.3))' }} />
-            <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900">Venue</h2>
+            <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900">ទីតាំង</h2>
           </div>
           <div className="text-center relative">
             <p className="text-2xl font-semibold text-purple-900 mb-2">{weddingInfo.venue}</p>
@@ -798,9 +953,7 @@ if (!framingFlowersLoaded) {
             {showMap && (
               <div className="mt-6 rounded-2xl overflow-hidden border-4 border-purple-300 shadow-xl">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345093705!2d144.95373631531677!3d-37.81720974201415!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ad65d4c2b349649%3A0xb6899234e561db11!2sEnvato!5e0!3m2!1sen!2sau!4v1560236351204!5m2!1sen!2sau"
-                  width="100%"
-                  height="300"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.251994908542!2d103.2096964!3d13.083209499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310549a2c47f8917%3A0xc3a428a914f8a68e!2sVimean%20Pochey!5e0!3m2!1sen!2sjp!4v1769324541125!5m2!1sen!2sjp"
                   style={{ border: 0 }}
                   allowFullScreen=""
                   loading="lazy"
@@ -808,76 +961,6 @@ if (!framingFlowersLoaded) {
               </div>
             )}
           </div>
-        </div>
-
-        <div 
-          className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative overflow-hidden ring-1 ring-white/80"
-          style={{
-            // animation: 'float 3s ease-in-out infinite',
-            // Strongest inner white shine for reflection, and a defined purple outer glow.
-            marginTop: 20,
-            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
-          <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative">Event Schedule</h2>
-          <div className="space-y-4 relative">
-            {[
-              { time: '4:00', title: 'Guest Arrival', desc: 'Please be seated by 4:30 PM' },
-              { time: '5:00', title: 'Wedding Ceremony', desc: 'Exchange of vows' },
-              { time: '6:00', title: 'Cocktail Hour', desc: 'Garden terrace' },
-              { time: '7:00', title: 'Reception & Dinner', desc: 'Dinner, dancing, and celebration' }
-            ].map((event, idx) => (
-              <div key={idx} className="flex items-start group">
-                <div className="bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-full w-14 h-14 flex items-center justify-center font-bold mr-4 flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300"
-                  style={{ filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.4))' }}>
-                  {event.time}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg text-purple-900">{event.title}</h3>
-                  <p className="text-purple-700">{event.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-          <div 
-            className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
-            style={{
-              // animation: 'float 3s ease-in-out infinite',
-              // Strongest inner white shine for reflection, and a defined purple outer glow.
-              marginTop: 20,
-              boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
-            }}
-          >
-          {/* GlassEdgeFlower will now be visible outside the edge */}
-            <GlassEdgeFlower 
-              src="/assets/flowers/6.webp" 
-              className="top-[-20px] left-[-20px] w-20 h-40" 
-              style={{ transform: 'rotate(15deg)' }}
-            />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
-          <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative">Our Story</h2>
-          <div className="grid grid-cols-2 gap-4 relative">
-            {[
-              'from-purple-300 to-indigo-300',
-              'from-indigo-300 to-purple-400',
-              'from-purple-400 to-indigo-400',
-              'from-indigo-400 to-purple-500'
-            ].map((gradient, idx) => (
-              <div 
-                key={idx}
-                className={`aspect-square bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-300 border-2 border-purple-200/50`}
-                style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.2))' }}
-              >
-                <p className="text-white/80 text-sm font-medium">Photo {idx + 1}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-center text-purple-600 mt-6 italic text-sm">
-            Replace these placeholders with your actual photos
-          </p>
         </div>
 
           <div 
@@ -899,12 +982,33 @@ if (!framingFlowersLoaded) {
             filter: 'drop-shadow(0 0 10px rgba(168, 85, 247, 0.4))',
             animation: 'float 2s ease-in-out infinite'
           }} />
-          <p className="text-xl text-purple-900 mb-4 font-medium relative">
-            We can't wait to celebrate with you!
-          </p>
-          <p className="text-purple-700 relative">
-            Your presence is the greatest gift of all
-          </p>
+          {/* <p className="text-xl text-purple-900 mb-4 font-medium relative"> */}
+          <div className="max-w-2xl mx-auto text-center space-y-6 mt-6">
+            {/* Khmer Text */}
+            <p className="text-lg md:text-xl text-purple-900 font-medium leading-relaxed px-4">
+              យើងខ្ញុំទាំងពីរនាក់ ពិតជារំភើបសប្បាយរីករាយ
+              <br />
+              នឹងការអញ្ជើញចូលរួមអបអរសាទរ
+              <br />
+              របស់អ្នកទាំងអស់គ្នាក្នុងថ្ងៃពិសេសរបស់ខ្ញុំទាំងពីរនាក់
+              <br />
+              យើងខ្ញុំ សូមអរគុណដោយក្ដីគោរពស្រឡាញ់។
+            </p>
+
+            {/* Decorative Divider */}
+            <div className="flex items-center justify-center gap-3 py-2">
+              <div className="h-px w-16 bg-gradient-to-r from-transparent to-purple-300"></div>
+              <div className="text-purple-400 text-2xl">♥</div>
+              <div className="h-px w-16 bg-gradient-to-l from-transparent to-purple-300"></div>
+            </div>
+
+            {/* English Text */}
+            <p className="text-base md:text-lg text-purple-700 leading-relaxed px-4 italic">
+              Thank you from the bottom of our hearts for joining us and for your kind
+              congratulations on our wedding day. Your presence made our celebration
+              truly unforgettable.
+            </p>
+          </div>
           <div className="mt-6 relative">
             <p className="text-sm text-purple-600">With love,</p>
             <p className="text-2xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 mt-2">
