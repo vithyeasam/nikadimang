@@ -38,7 +38,7 @@ const photos = [
     { url: '/assets/iloveimg/IMG11.jpg', alt: 'Reception' },
     { url: '/assets/iloveimg/IMG12.jpg', alt: 'Reception' },
     { url: '/assets/iloveimg/IMG13.jpg', alt: 'Reception' },
-    { url: '/assets/iloveimg/IMG14.jpg', alt: 'Reception' },
+    // { url: '/assets/iloveimg/IMG14.jpg', alt: 'Reception' },
     // { url: '/assets/iloveimg/IMG1.png', alt: 'Couple portrait' },
   ];
 
