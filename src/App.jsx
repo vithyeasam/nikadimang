@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
-import { Music, MapPin, Calendar, Clock, Heart, Sparkles } from 'lucide-react';
+import { Music, MapPin, Calendar, Clock, Heart, Sparkles, Phone } from 'lucide-react';
 import WeddingCarousel from './assets/WeddingCarousel';
 import guestData  from '../public/assets/names/guests';
 
@@ -29,7 +29,7 @@ const useInView = (ref, options = { threshold: 0.1, rootMargin: '100px' }) => {
 const weddingInfo = {
   bride: "និកាណ៌",
   groom: "ឌីម៉ង់",
-  date: "២៨ កុម្ភះ ២០២៥",
+  date: "២៨ កុម្ភៈ ២០២៦",
   time: "០៥:00 ល្ងាច",
   venue: "ភោជនីយដ្ឋាន វិមានពរជ័យ",
   address: "ក្រុងបាត់ដំបង",
@@ -325,6 +325,7 @@ export default function WeddingInvitation() {
   const [guestName, setGuestName] = useState('Guest');
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [showMap, setShowMap] = useState(false);
+  const [showGifts, setShowGifts] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [framingFlowersLoaded, setFramingFlowersLoaded] = useState(false);
 
@@ -777,6 +778,38 @@ if (!framingFlowersLoaded) {
         </div>
 
         <div 
+            className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
+            // REMOVED: overflow-hidden
+            style={{
+              // animation: 'float 3s ease-in-out infinite',
+              // Strongest inner white shine for reflection, and a defined purple outer glow.
+              marginTop: 20,
+              boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
+            }}
+          >
+            {/* GlassEdgeFlower will now be visible outside the edge */}
+            <GlassEdgeFlower 
+              src="/assets/flowers/4.webp" 
+              className="bottom-[-20px] left-[-20px] w-20 h-20" 
+              style={{ transform: 'rotate(15deg)' }}
+            />
+            
+            {/* ... rest of your content ... */}
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
+          <div className="flex items-center justify-center relative">
+            <Calendar className="w-8 h-8 text-purple-600 mr-3" style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.3))' }} />
+            <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">កាលបរិច្ឆេទ</h2>
+          </div>
+          <div className="text-center relative">
+            <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-indigo-800 mb-2 py-2">{weddingInfo.date}</p>
+            {/* <div className="flex items-center justify-center text-xl text-purple-900">
+              <Clock className="w-5 h-5 mr-2 text-purple-600" />
+              <span>{weddingInfo.time}</span>
+            </div> */}
+          </div>
+        </div>
+
+        <div 
           className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative overflow-hidden ring-1 ring-white/80"
           style={{
             // animation: 'float 3s ease-in-out infinite',
@@ -786,9 +819,12 @@ if (!framingFlowersLoaded) {
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
-          <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative py-2 leading-relaxed">
+          <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">
             កម្មវិធីមង្គលអាពាហ៍ពិពាហ៍
           </h2>
+            {/* <div className="flex items-center justify-center text-xl text-purple-900 mb-6">
+              <span>{weddingInfo.date}</span>
+            </div> */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 text-purple-400 mb-1">
               <span className="text-xs">✦</span>
@@ -806,7 +842,7 @@ if (!framingFlowersLoaded) {
               { time: '០៧:០០', title: 'ពិធីហែជំនូន', desc: '' },
               { time: '០៩:០០', title: 'ពិធីលេីកផ្កាស្លា និងបំពាក់ចិញ្ចៀន', desc: '' },
               { time: '១០:០០', title: 'ពិធីកាត់សក់បង្កក់សិរី', desc: '' },
-              { time: '១១:០០', title: 'អញ្ជេីញភ្ញៀវពិសាអាហារថ្ងៃត្រង់', desc: '' }
+              { time: '១១:០០', title: 'អញ្ជេីញភ្ញៀវពិសារអាហារថ្ងៃត្រង់', desc: '' }
             ].map((event, idx) => (
               <div key={idx} className="flex items-start group">
               <div 
@@ -842,7 +878,7 @@ if (!framingFlowersLoaded) {
             {[
               { time: '០១:០០', title: 'ពិធីសំពះផ្ទឹម សែនចងដៃ បង្វិលពពិល និងព្រះថោងនាងនាគ', desc: '' },
               { time: '០២:០០', title: 'ពិធីសូត្រមន្ដចម្រេីនព្រះបរិត្ត', desc: '' },
-              { time: '០៥:០០', title: 'អញ្ជេីញភ្ញៀវពិសាភោជនាហារនៅ ភោជនីយដ្ឋាន វិមានពរជ័យ', desc: '' },
+              { time: '០៥:០០', title: 'អញ្ជេីញភ្ញៀវពិសារភោជនាហារនៅ ភោជនីយដ្ឋាន វិមានពរជ័យ', desc: '' },
             ].map((event, idx) => (
               <div key={idx} className="flex items-start group">
                 <div 
@@ -865,38 +901,6 @@ if (!framingFlowersLoaded) {
           </div>
         </div>
 
-                  <div 
-            className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
-            // REMOVED: overflow-hidden
-            style={{
-              // animation: 'float 3s ease-in-out infinite',
-              // Strongest inner white shine for reflection, and a defined purple outer glow.
-              marginTop: 20,
-              boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
-            }}
-          >
-            {/* GlassEdgeFlower will now be visible outside the edge */}
-            <GlassEdgeFlower 
-              src="/assets/flowers/4.webp" 
-              className="bottom-[-20px] left-[-20px] w-20 h-20" 
-              style={{ transform: 'rotate(15deg)' }}
-            />
-            
-            {/* ... rest of your content ... */}
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
-          <div className="flex items-center justify-center relative">
-            <Calendar className="w-8 h-8 text-purple-600 mr-3" style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.3))' }} />
-            <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">កាលបរិច្ឆេទ</h2>
-          </div>
-          <div className="text-center relative">
-            <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-800 to-indigo-800 mb-2 py-2">{weddingInfo.date}</p>
-            <div className="flex items-center justify-center text-xl text-purple-900">
-              <Clock className="w-5 h-5 mr-2 text-purple-600" />
-              <span>{weddingInfo.time}</span>
-            </div>
-          </div>
-        </div>
-
         <div 
           className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
           style={{
@@ -914,11 +918,20 @@ if (!framingFlowersLoaded) {
           <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
           <div className="flex items-center justify-center mb-4 relative">
             <MapPin className="w-8 h-8 text-purple-600 mr-3" style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.3))' }} />
-            <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900">ទីតាំង</h2>
+            <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">ទីតាំង</h2>
           </div>
           <div className="text-center relative">
             <p className="text-2xl font-semibold text-purple-900 mb-2">{weddingInfo.venue}</p>
             <p className="text-purple-700 mb-4">{weddingInfo.address}</p>
+            {!showMap && (
+              <div className="mb-6 flex justify-center">
+                <img 
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.google.com/maps/search/Vimean+Pochey/@13.083209,103.2096964,15z"
+                  alt="Map QR Code"
+                  className="w-48 h-48 border-4 border-purple-300 rounded-lg shadow-lg bg-white p-2"
+                />
+              </div>
+            )}
             <button
               onClick={() => setShowMap(!showMap)}
               className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-full hover:shadow-xl transform hover:scale-105 transition-all duration-300"
@@ -927,13 +940,80 @@ if (!framingFlowersLoaded) {
               {showMap ? 'Hide Map' : 'View Map'}
             </button>
             {showMap && (
-              <div className="mt-6 rounded-2xl overflow-hidden border-4 border-purple-300 shadow-xl">
+              <div className="mt-6 rounded-2xl overflow-hidden border-4 border-purple-300 shadow-xl relative">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.251994908542!2d103.2096964!3d13.083209499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310549a2c47f8917%3A0xc3a428a914f8a68e!2sVimean%20Pochey!5e0!3m2!1sen!2sjp!4v1769324541125!5m2!1sen!2sjp"
-                  style={{ border: 0 }}
+                  style={{ border: 0, width: '100%', height: '400px', display: 'block' }}
                   allowFullScreen=""
                   loading="lazy"
                 ></iframe>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div 
+          className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
+          style={{
+            marginTop: 20,
+            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
+          }}
+        >
+          <GlassEdgeFlower 
+            src="/assets/flowers/4.webp" 
+            className="bottom-[-20px] left-[-20px] w-20 h-20" 
+            style={{ transform: 'rotate(-15deg)' }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
+          
+          <div className="text-center relative">
+            <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">
+              ចំណងដៃ
+            </h2>
+            <button
+              onClick={() => setShowGifts(!showGifts)}
+              className="inline-flex items-center justify-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-10 py-4 rounded-full hover:shadow-2xl transform hover:scale-105 transition-all duration-300 font-semibold text-lg"
+              style={{ filter: 'drop-shadow(0 0 15px rgba(168, 85, 247, 0.4))' }}
+            >
+              <span>{showGifts ? 'បិទ' : '💝 បង្ហាញ QR Code'}</span>
+            </button>
+            
+            {showGifts && (
+              <div className="mt-10 space-y-8">
+                <div className="flex flex-col md:flex-row justify-center gap-8 items-stretch">
+                  {/* QR Code 1 */}
+                  <div className="flex flex-col items-center">
+                    <div className="relative bg-white rounded-2xl p-3 shadow-xl border-4 border-purple-300 transform hover:scale-105 transition-transform duration-300">
+                      <img 
+                        src="/assets/dollar.jpg"
+                        alt="Payment QR Code 1"
+                        className="w-40 h-60 rounded-xl object-cover"
+                      />
+                    </div>
+                    <p className="text-purple-900 font-semibold mt-4 text-sm">
+                      ប្រាក់ដុល្លា (USD)
+                    </p>
+                  </div>
+                  
+                  {/* Decorative Divider */}
+                  <div className="hidden md:flex items-center">
+                    <div className="h-48 w-1 bg-gradient-to-b from-transparent via-purple-300 to-transparent"></div>
+                  </div>
+                  
+                  {/* QR Code 2 */}
+                  <div className="flex flex-col items-center">
+                    <div className="relative bg-white rounded-2xl p-3 shadow-xl border-4 border-purple-300 transform hover:scale-105 transition-transform duration-300">
+                      <img 
+                        src="/assets/riel.jpg"
+                        alt="Payment QR Code 2"
+                        className="w-40 h-60 rounded-xl object-cover"
+                      />
+                    </div>
+                    <p className="text-purple-900 font-semibold mt-4 text-sm">
+                      ប្រាក់រៀល (KHR)
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -990,6 +1070,45 @@ if (!framingFlowersLoaded) {
             <p className="text-2xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 mt-2">
               {weddingInfo.bride} & {weddingInfo.groom}
             </p>
+          </div>
+        </div>
+
+        <div 
+          className="bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 relative ring-1 ring-white/80"
+          style={{
+            marginTop: 20,
+            boxShadow: 'inset 0 0 0 2px rgba(255, 255, 255, 0.4), inset 0 0 60px rgba(255, 255, 255, 0.1), 0 10px 40px rgba(168, 85, 247, 0.5)'
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
+          
+          <div className="text-center relative">
+            <div className="flex items-center justify-center mb-10">
+              <Phone className="w-8 h-8 text-purple-600 mr-3" style={{ filter: 'drop-shadow(0 0 5px rgba(168, 85, 247, 0.3))' }} />
+              <h2 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center relative py-2 leading-relaxed">
+                ទំនាក់ទំនង
+              </h2>
+            </div>
+            
+            <div className="max-w-md mx-auto">
+              <div className="flex justify-center items-center gap-8">
+                <a 
+                  href="tel:+85512589545"
+                  className="text-purple-700 hover:text-purple-900 text-lg font-medium transition-colors duration-300"
+                >
+                  012 589 545
+                </a>
+                
+                <div className="h-8 w-px bg-gradient-to-b from-purple-300 to-purple-300"></div>
+                
+                <a 
+                  href="tel:+85512944658"
+                  className="text-purple-700 hover:text-purple-900 text-lg font-medium transition-colors duration-300"
+                >
+                  012 944 658
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
