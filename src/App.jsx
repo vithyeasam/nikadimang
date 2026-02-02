@@ -780,7 +780,7 @@ if (!framingFlowersLoaded) {
               style={{ transform: 'rotate(15deg)' }}
             />
           <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-transparent to-indigo-100/20 pointer-events-none"></div>
-          <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative">Our Story</h2>
+          <h2 className="text-3xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-purple-900 to-indigo-900 text-center mb-6 relative">កម្រងរូបភាពអាពាហ៍ពិពាហ៍</h2>
                   <WeddingCarousel 
           photos={weddingPhotos}
           autoPlayInterval={5000} // 5 seconds per slide (optional)
