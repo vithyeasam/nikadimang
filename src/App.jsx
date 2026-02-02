@@ -551,6 +551,11 @@ const handleOpen = useCallback(() => {
     setShowMainContent(true);
   }, []);
 
+  const handleSkipSlideshow = useCallback(() => {
+    setShowSlideshow(false);
+    setShowMainContent(true);
+  }, []);
+
   if (isLoading) {
   return <LoadingScreen />;
 }
@@ -683,6 +688,14 @@ if (!framingFlowersLoaded) {
         <PhotoSlideshow 
           onComplete={handleSlideshowComplete} 
         />
+        <button
+          onClick={handleSkipSlideshow}
+          aria-label="Skip slideshow"
+          className="absolute top-6 right-6 bg-white/90 text-purple-800 px-4 py-2 rounded-full shadow-lg hover:scale-105 transform transition"
+          style={{ zIndex: 60 }}
+        >
+          Skip
+        </button>
       </div>
     );
   }
