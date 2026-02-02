@@ -1093,19 +1093,19 @@ if (!framingFlowersLoaded) {
             <div className="max-w-md mx-auto">
               <div className="flex justify-center items-center gap-8">
                 <a 
-                  href="tel:+85512589545"
+                  href="tel:+85599940114"
                   className="text-purple-700 hover:text-purple-900 text-lg font-medium transition-colors duration-300"
                 >
-                  012 589 545
+                  099 940 114
                 </a>
                 
                 <div className="h-8 w-px bg-gradient-to-b from-purple-300 to-purple-300"></div>
                 
                 <a 
-                  href="tel:+85512944658"
+                  href="tel:+85589856764"
                   className="text-purple-700 hover:text-purple-900 text-lg font-medium transition-colors duration-300"
                 >
-                  012 944 658
+                  089 856 764
                 </a>
               </div>
             </div>
